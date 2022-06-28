@@ -7,9 +7,10 @@ require('dotenv').config()
 
 exports.signup = async (req, res) => {
   const userExists = await User.findOne({email: req.body.email})
-  if (userExists) 
+  const usernameExists = await User.findOne({username: req.body.username})
+  if (userExists || usernameExists) 
     return res.status(403).json({
-      error: "Email is taken"
+      error: "Email or Username is taken"
   });
   const user = await new User(req.body)
   await user.save()
@@ -34,6 +35,11 @@ exports.signin = (req, res) => {
     const {_id, fullName, username, email} = user
     return res.json({token, user: { _id, email, fullName, username} })
   })
+}
+
+exports.signout = (req, res) => {
+  res.clearCookie('t')
+  return res.json({ message: "Signout success!" })
 }
 
 exports.requireSignin = expressJwt({
