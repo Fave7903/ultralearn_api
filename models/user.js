@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
+  location: String,
+  gender: String,
+  dateOfBirth: Date,
+  bio: String,
+  skillInterests: [String],
   hashed_password: {
     type: String,
     required: true
