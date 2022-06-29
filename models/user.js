@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   gender: String,
   dateOfBirth: Date,
   bio: String,
-  skillInterests: [String],
+  skillInterests: String,
   hashed_password: {
     type: String,
     required: true
