@@ -34,7 +34,7 @@ User.find((err, users) => {
     return res.status(400).json({error: err})
     }
     res.json(users)
-}).select("fullName username email updated created")
+}).select("fullName username email updated created dateOfBirth location gender bio skillInterests")
 }
 
 exports.hasAuthorization = (req, res, next) => {
