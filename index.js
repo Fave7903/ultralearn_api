@@ -1,6 +1,7 @@
 const express = require('express')
 
 
+const cors = require('cors')
 var cookieParser = require('cookie-parser')
 
 const dotenv = require('dotenv')
@@ -9,7 +10,6 @@ const bodyParser = require('body-parser')
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
-const cors = require('cors')
 const fs = require('fs')
 const { v1: uuidv1 } = require('uuid')
 const expressValidator = require('express-validator');
@@ -21,6 +21,12 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 .catch((err) => console.log(err.message))
 
 const PORT = process.env.PORT || 5000
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Expose-Headers', '*')
+  next();
+})
 app.use(expressValidator())
 app.use(cors())
 app.use(bodyParser.json())
