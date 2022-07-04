@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const User = require('../models/user')
-// const formidable = require('formidable')
-// const fs = require('fs')
+const formidable = require('formidable')
+const fs = require('fs')
 
 exports.userByUsername = (req, res, next, username) => {
     User.findOne({username: req.params.username}).exec((err, user) => {
