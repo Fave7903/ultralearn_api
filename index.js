@@ -21,14 +21,15 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 .catch((err) => console.log(err.message))
 
 const PORT = process.env.PORT || 5000
+
+app.use(expressValidator())
+app.use(cors())
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-app.use(expressValidator())
-app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/', authRoutes)
