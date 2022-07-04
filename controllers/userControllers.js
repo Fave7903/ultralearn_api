@@ -61,7 +61,6 @@ exports.hasAuthorization = (req, res, next) => {
 //     res.json({ user })
 // })
 // }
-
 exports.updateUser = (req, res, next) => {
     let form = new formidable.IncomingForm()
     form.keepExtensions = true
@@ -88,7 +87,12 @@ exports.updateUser = (req, res, next) => {
         }
         user.hashed_password = undefined
         user.salt = undefined
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+      
         res.json(user)
+        next();
       })
     })
 }
