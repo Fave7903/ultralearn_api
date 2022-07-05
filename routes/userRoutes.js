@@ -1,7 +1,20 @@
 const express = require('express')
 const { requireSignin } = require('../controllers/authControllers')
-const { userByUsername,  getUser, updateUser, allUsers, deleteUser } = require('../controllers/userControllers')
+const { 
+    userByUsername,  
+    getUser, 
+    updateUser, 
+    allUsers, 
+    deleteUser,
+    addFollowing,
+    addFollower,
+    removeFollowing,
+    removeFollower
+    } = require('../controllers/userControllers')
 const router = express.Router()
+
+router.put('/user/follow', requireSignin, addFollowing, addFollower)
+router.put('/user/unfollow', requireSignin, removeFollowing, removeFollower)
 
 router.get('/users', allUsers)
 

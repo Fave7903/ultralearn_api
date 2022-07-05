@@ -4,7 +4,10 @@ const formidable = require('formidable')
 const fs = require('fs')
 
 exports.userByUsername = (req, res, next, username) => {
-    User.findOne({username: req.params.username}).exec((err, user) => {
+    User.findOne({username: req.params.username})
+    .populate('following', '_id username')
+    .populate('followers', '_id username')
+    .exec((err, user) => {
         if (err || !user) {
             return res.status(403).json({
                 error: "This user does not exist"
@@ -103,5 +106,64 @@ exports.deleteUser = (req, res, next) => {
     user.hashed_password = undefined
     user.salt = undefined
     res.json({ message: "Your account has been deleted successfully!" })
+  })
+}
+
+// follow unfollow
+
+exports.addFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}, (err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: err
+      })
+    }
+    next()
+  })
+}
+
+exports.addFollower = (req, res) => {
+  User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new:true})
+  .populate('following', '_id username')
+  .populate('followers', '_id username')
+  .exec((err, result) => {
+    if (err) {
+      return  res.status(400).json({
+        error: err
+      })
+    }
+    result.hashed_password = undefined
+    result.salt = undefined
+    res.json(result)
+  })
+}
+
+
+// remove follow unfollow
+
+exports.removeFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}, (err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: err
+      })
+    }
+    next()
+  })
+}
+
+exports.removeFollower = (req, res) => {
+  User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new:true})
+  .populate('following', '_id username')
+  .populate('followers', '_id username')
+  .exec((err, result) => {
+    if (err) {
+      return  res.status(400).json({
+        error: err
+      })
+    }
+    result.hashed_password = undefined
+    result.salt = undefined
+    res.json(result)
   })
 }
