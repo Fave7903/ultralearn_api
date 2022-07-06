@@ -9,6 +9,6 @@ router.get('/', (req, res) => {
 router.post('/signup', userSignupValidator, signup)
 
 router.post('/signin', signin)
-router.post('/signout', signout)
+router.get('/signout', signout)
 
 module.exports = router
