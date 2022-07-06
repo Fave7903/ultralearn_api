@@ -23,7 +23,7 @@ exports.getPosts = (req, res) => {
     .populate("postedBy", "_id username")
     .select("_id body")
     .then((posts) => {
-      res.json({ posts })
+      res.json(posts)
     })
     .catch(err => console.log(err))
   }
