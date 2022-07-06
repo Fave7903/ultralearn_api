@@ -124,8 +124,8 @@ exports.addFollowing = (req, res, next) => {
 
 exports.addFollower = (req, res) => {
   User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new:true})
-  .populate('following', '_id username')
-  .populate('followers', '_id username')
+  .populate('following', '_id username bio')
+  .populate('followers', '_id username bio')
   .exec((err, result) => {
     if (err) {
       return  res.status(400).json({
