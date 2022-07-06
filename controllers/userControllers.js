@@ -178,5 +178,5 @@ exports.findPeople = (req, res) => {
       })
     }
     res.json(users)
-  }).select('username')
+  }).select('username fullName')
 }
