@@ -5,7 +5,7 @@ const _ = require('lodash')
 
 exports.postById = (req, res, next, id) => {
   Post.findById(id)
-    .populate("postedBy", "id username")
+    .populate("postedBy", "id username fullName bio")
     .exec((err, post) => {
       if(err || !post) {
         return res.status(400).json({
@@ -20,7 +20,7 @@ exports.postById = (req, res, next, id) => {
 
 exports.getPosts = (req, res) => {
   const posts = Post.find()
-    .populate("postedBy", "_id username")
+    .populate("postedBy", "_id username fullName bio")
     .select("_id body")
     .then((posts) => {
       res.json(posts)
@@ -45,7 +45,7 @@ exports.createPost = async(req, res, next) => {
 
 exports.postsByUser = (req, res) => {
   Post.find({postedBy: req.profile._id})
-    .populate("postedBy", "_id username")
+    .populate("postedBy", "_id username fullName bio")
     .sort("_created")
     .exec((err, posts) => {
       if (err) {
