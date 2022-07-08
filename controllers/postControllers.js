@@ -22,6 +22,7 @@ exports.getPosts = (req, res) => {
   const posts = Post.find()
     .populate("postedBy", "_id username fullName bio")
     .select("_id body created")
+    .sort({created: -1})
     .then((posts) => {
       res.json(posts)
     })
