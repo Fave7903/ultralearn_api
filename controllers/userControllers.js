@@ -24,7 +24,7 @@ exports.allUsers = (req, res) => {
         return res.status(400).json({error: err})
       }
       res.json(users)
-    }).select("fullName username email location gender dateOfBirth bio skillInterests updated created, imgId")
+    }).select("fullName username email location gender dateOfBirth bio skillInterests updated created imgId")
   }
 
 exports.getUser = (req, res) => {
@@ -171,5 +171,5 @@ exports.findPeople = (req, res) => {
       })
     }
     res.json(users)
-  }).select('username, fullName, imgId')
+  }).select('username fullName imgId')
 }
