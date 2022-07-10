@@ -5,8 +5,8 @@ const fs = require('fs')
 
 exports.userByUsername = (req, res, next, username) => {
     User.findOne({username: req.params.username})
-    .populate('following', '_id username fullName bio')
-    .populate('followers', '_id username fullName bio')
+    .populate('following', '_id username fullName bio, imgId')
+    .populate('followers', '_id username fullName bio, imgId')
     .exec((err, user) => {
         if (err || !user) {
             return res.status(403).json({
@@ -24,7 +24,7 @@ exports.allUsers = (req, res) => {
         return res.status(400).json({error: err})
       }
       res.json(users)
-    }).select("fullName username email location gender dateOfBirth bio skillInterests updated created")
+    }).select("fullName username email location gender dateOfBirth bio skillInterests updated created, imgId")
   }
 
 exports.getUser = (req, res) => {
@@ -33,14 +33,6 @@ exports.getUser = (req, res) => {
     return res.json(req.profile)
   }
 
-exports.allUsers = (req, res) => {
-User.find((err, users) => {
-    if (err) {
-    return res.status(400).json({error: err})
-    }
-    res.json(users)
-}).select("fullName username email updated created dateOfBirth location gender bio skillInterests")
-}
 
 exports.hasAuthorization = (req, res, next) => {
     const authorized = req.profile && req.auth && req.profile._id === req.auth._id
@@ -124,8 +116,8 @@ exports.addFollowing = (req, res, next) => {
 
 exports.addFollower = (req, res) => {
   User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new:true})
-  .populate('following', '_id username fullName bio')
-  .populate('followers', '_id username fullName bio')
+  .populate('following', '_id username fullName bio, imgId')
+  .populate('followers', '_id username fullName bio, imgId')
   .exec((err, result) => {
     if (err) {
       return  res.status(400).json({
@@ -154,8 +146,8 @@ exports.removeFollowing = (req, res, next) => {
 
 exports.removeFollower = (req, res) => {
   User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new:true})
-  .populate('following', '_id username fullName bio')
-  .populate('followers', '_id username fullName bio')
+  .populate('following', '_id username fullName bio, imgId')
+  .populate('followers', '_id username fullName bio, imgId')
   .exec((err, result) => {
     if (err) {
       return  res.status(400).json({
@@ -178,5 +170,5 @@ exports.findPeople = (req, res) => {
       })
     }
     res.json(users)
-  }).select('username fullName')
+  }).select('username fullName, imgId')
 }

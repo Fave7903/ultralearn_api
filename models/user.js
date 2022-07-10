@@ -41,13 +41,8 @@ const userSchema = new mongoose.Schema({
   followers: [{
     type: ObjectId,
     ref: "user"
-  }]
-
-
-  // photo: {
-  //   data: Buffer,
-  //   contentType: String
-  // }
+  }],
+  imgId: String
 })
 
 userSchema.virtual('password')
