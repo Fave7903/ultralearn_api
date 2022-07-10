@@ -160,6 +160,7 @@ exports.removeFollower = (req, res) => {
   })
 }
 
+
 exports.findPeople = (req, res) => {
   let following = req.profile.following
   following.push(req.profile._id)
