@@ -21,7 +21,7 @@ exports.postById = (req, res, next, id) => {
 exports.getPosts = (req, res) => {
   const posts = Post.find()
     .populate("postedBy", "_id username fullName bio imgId")
-    .select("_id body created")
+    .select("_id body created postImgId")
     .sort({created: -1})
     .then((posts) => {
       res.json(posts)
