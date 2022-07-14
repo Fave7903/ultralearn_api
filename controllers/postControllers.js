@@ -47,7 +47,7 @@ exports.createPost = async(req, res, next) => {
 exports.postsByUser = (req, res) => {
   Post.find({postedBy: req.profile._id})
     .populate("postedBy", "_id username fullName bio imgId")
-    .sort("_created")
+    .sort({created: -1})
     .exec((err, posts) => {
       if (err) {
         return res.status(400).json({
