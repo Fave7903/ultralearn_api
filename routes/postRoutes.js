@@ -21,11 +21,12 @@ router.put('/post/like', requireSignin, like)
 router.put('/post/unlike', requireSignin, unlike)
 
 // comments
-router.put('/post/comment', requireSignin, comment)
-router.put('/post/uncomment', requireSignin, uncomment)
+// router.put('/post/comment', requireSignin, comment)
+// router.put('/post/uncomment', requireSignin, uncomment)
 
 router.post('/post/new/:username', requireSignin, createPost, createPostValidator)
 
+router.get('/post/:postId', postById)
 router.get('/posts/by/:username', requireSignin, postsByUser)
 router.put('/post/:postId', requireSignin, isPoster, updatePost)
 router.delete('/post/:postId', requireSignin, isPoster, deletePost)
