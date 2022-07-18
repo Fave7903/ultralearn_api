@@ -10,9 +10,9 @@ const { getPosts,
     updatePost, 
     deletePost,
     like,
-    unlike,
-    comment,
-    uncomment
+    unlike
+    // comment,
+    // uncomment
 } = require('../controllers/postControllers')
 const router = express.Router()
 
