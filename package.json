@@ -4,7 +4,8 @@
   "description": "An API for UltraLearn App",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "start:dev": "node index.js"
   },
   "author": "Favour Solomon",
   "license": "ISC",

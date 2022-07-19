@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 const User = require('../models/user')
 const formidable = require('formidable')
@@ -55,6 +56,80 @@ user.save((err) => {
     user.salt = undefined
     res.json({ user })
 })
+}
+
+exports.resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  const { _id } = jwt.verify(token, process.env.JWT_SECRET);
+
+  await User.findOne({_id }).exec(async (err, user) => {
+    if(err){
+      return res.status(401).json({
+        success: false,
+        message: 'An error occured, try again'
+      });
+    }
+    const newPassword = user.encryptPassword(password)
+    await User.findByIdAndUpdate(_id, {
+      hashed_password: newPassword
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'password updated successfully'
+    });
+  })  
+}
+
+
+exports.sendPasswordResetEmail = async (req, res) => {
+
+  const user = await User.findOne({email: req.body.email});
+
+  if(!user || !user.email){
+    // this is intentional, so as to delay hackers
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  }
+
+  const userEmail = user.email;
+  const apiKey = 'your api key here';
+  const domain = 'your domain here';
+  const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET)
+
+  const mailgun = require('mailgun-js')({ domain, apiKey });
+
+  mailgun.
+    messages().
+    send({
+      from: `ultralearnng@gmail.com`,
+        to: userEmail,
+        subject: 'Password Reset',
+        html: `
+        <div>
+        <style>
+          h1 { color: green; }
+        </style>
+
+        <h1>Click the link below to reset your password</h1>
+        <p>${req.protocol}://${req.get('host')}/reset-password/${token}</p>
+      </div>`
+    }).
+    then(res => {
+      return res.status(200).json({
+        success: true,
+        message: 'email sent succesfully'
+      });
+    }).
+    catch(err => {
+      // positive response is sent intentionally
+      return res.status(200).json({
+        success: true,
+        message: 'email sent succesfully'
+      });
+    });
+    
 }
 
 
