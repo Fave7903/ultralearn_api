@@ -21,15 +21,7 @@ exports.postById = (req, res, next, id) => {
 }
 
 exports.getPost = (req, res) => {
-  const post = Post.findById(req.post._id)
-    .populate("postedBy", "_id username fullName bio imgId")
-    // .populate('comments', 'text created')
-    // .populate('comments.postedBy', '_id fullName username imgId')
-    .select("_id body created postImgId likes")
-    .then((post) => {
-      res.json(post)
-    })
-    .catch(err => console.log(err))
+    return res.json(req.post)
   }
 
 exports.getPosts = (req, res) => {
