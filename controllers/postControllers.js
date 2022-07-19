@@ -29,7 +29,7 @@ exports.getPosts = (req, res) => {
     .populate("postedBy", "_id username fullName bio imgId")
     .populate('comments', 'text created')
     .populate('comments.postedBy', '_id fullName username imgId')
-    .select("_id body created postImgId likes")
+    .select("_id body created postImgId likes comments postedBy")
     .sort({created: -1})
     .then((posts) => {
       res.json(posts)
