@@ -17,6 +17,7 @@ const { getPosts,
 } = require('../controllers/postControllers')
 const router = express.Router()
 
+router.get('/post/:postId', getPost)
 router.get('/posts', getPosts)
 router.put('/post/like', requireSignin, like)
 router.put('/post/unlike', requireSignin, unlike)
@@ -27,7 +28,6 @@ router.put('/post/unlike', requireSignin, unlike)
 
 router.post('/post/new/:username', requireSignin, createPost, createPostValidator)
 
-router.get('/post/:postId', getPost)
 router.get('/posts/by/:username', requireSignin, postsByUser)
 router.put('/post/:postId', requireSignin, isPoster, updatePost)
 router.delete('/post/:postId', requireSignin, isPoster, deletePost)
