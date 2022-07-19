@@ -10,7 +10,8 @@ const { getPosts,
     updatePost, 
     deletePost,
     like,
-    unlike
+    unlike,
+    getPost
     // comment,
     // uncomment
 } = require('../controllers/postControllers')
@@ -26,7 +27,7 @@ router.put('/post/unlike', requireSignin, unlike)
 
 router.post('/post/new/:username', requireSignin, createPost, createPostValidator)
 
-router.get('/post/:postId', postById)
+router.get('/post/:postId', getPost)
 router.get('/posts/by/:username', requireSignin, postsByUser)
 router.put('/post/:postId', requireSignin, isPoster, updatePost)
 router.delete('/post/:postId', requireSignin, isPoster, deletePost)

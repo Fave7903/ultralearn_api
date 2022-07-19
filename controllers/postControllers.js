@@ -14,12 +14,23 @@ exports.postById = (req, res, next, id) => {
           error: err
         })
       }
-      res.json(post)
       req.post = post
       next()
     })
   
 }
+
+exports.getPost = (req, res) => {
+  const posts = Post.findById(req.post._id)
+    .populate("postedBy", "_id username fullName bio imgId")
+    // .populate('comments', 'text created')
+    // .populate('comments.postedBy', '_id fullName username imgId')
+    .select("_id body created postImgId likes")
+    .then((post) => {
+      res.json(post)
+    })
+    .catch(err => console.log(err))
+  }
 
 exports.getPosts = (req, res) => {
   const posts = Post.find()
