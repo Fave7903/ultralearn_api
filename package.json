@@ -4,7 +4,8 @@
   "description": "An API for UltraLearn App",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "start:dev": "node index.js"
   },
   "author": "Favour Solomon",
   "license": "ISC",
@@ -16,10 +17,13 @@
     "express": "^4.17.3",
     "express-jwt": "^6.1.1",
     "express-validator": "^5.3.1",
+    "form-data": "^4.0.0",
     "formidable": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mailgun.js": "^7.0.4",
     "mongoose": "^6.2.8",
+    "nodemailer": "^6.7.7",
     "nodemon": "^2.0.15",
     "uuid": "^8.3.2",
     "uuidv1": "^1.6.14"
