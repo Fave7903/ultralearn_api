@@ -93,43 +93,49 @@ exports.sendPasswordResetEmail = async (req, res) => {
     });
   }
 
-  const userEmail = user.email;
-  const apiKey = 'your api key here';
-  const domain = 'your domain here';
-  const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET)
+  const API_KEY = process.env.MAILGUN_API_KEY;
+  const DOMAIN = process.env.MAILGUN_DOMAIN;
+  const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, {
+    expiresIn: 600
+  })
 
-  const mailgun = require('mailgun-js')({ domain, apiKey });
+  const formData = require('form-data');
+  const Mailgun = require('mailgun.js');
 
-  mailgun.
-    messages().
-    send({
-      from: `ultralearnng@gmail.com`,
-        to: userEmail,
-        subject: 'Password Reset',
-        html: `
-        <div>
-        <style>
-          h1 { color: green; }
-        </style>
+  const mailgun = new Mailgun(formData);
+  const client = mailgun.client({username: 'api', key: API_KEY});
+  console.log(req.protocol, req.get('host'))
 
-        <h1>Click the link below to reset your password</h1>
-        <p>${req.protocol}://${req.get('host')}/reset-password/${token}</p>
-      </div>`
-    }).
-    then(res => {
-      return res.status(200).json({
-        success: true,
-        message: 'email sent succesfully'
-      });
-    }).
-    catch(err => {
-      // positive response is sent intentionally
-      return res.status(200).json({
-        success: true,
-        message: 'email sent succesfully'
-      });
+  const messageData = {
+    from: "ultralearnng@gmail.com",
+    to: user.email,
+    subject: "Password Reset",
+    html:  `
+      <div>
+      <style>
+        h1 { color: green; }
+      </style>
+
+      <h1>Click the link below to reset your password</h1>
+      <p>${req.protocol}://${req.get('host')}/reset-password/${token}</p>
+    </div>`
+  };
+
+  client.messages.create(DOMAIN, messageData)
+  .then((response) => {
+    // console.log(response);
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
     });
-    
+  })
+  .catch((err) => {
+    // console.error(err);
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  });
 }
 
 
