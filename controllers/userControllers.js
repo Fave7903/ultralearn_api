@@ -104,7 +104,6 @@ exports.sendPasswordResetEmail = async (req, res) => {
 
   const mailgun = new Mailgun(formData);
   const client = mailgun.client({username: 'api', key: API_KEY});
-  console.log(req.protocol, req.get('host'))
 
   const messageData = {
     from: "ultralearnng@gmail.com",
@@ -117,7 +116,10 @@ exports.sendPasswordResetEmail = async (req, res) => {
       </style>
 
       <h1>Click the link below to reset your password</h1>
-      <p>${req.protocol}://${req.get('host')}/reset-password/${token}</p>
+      <p>
+        Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
+        HERE</a>
+      </p>
     </div>`
   };
 
@@ -130,7 +132,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
     });
   })
   .catch((err) => {
-    // console.error(err);
+    console.error(err);
     return res.status(200).json({
       success: true,
       message: 'email sent succesfully'
