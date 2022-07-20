@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 const User = require('../models/user')
 const formidable = require('formidable')
@@ -55,6 +56,88 @@ user.save((err) => {
     user.salt = undefined
     res.json({ user })
 })
+}
+
+exports.resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  const { _id } = jwt.verify(token, process.env.JWT_SECRET);
+
+  await User.findOne({_id }).exec(async (err, user) => {
+    if(err){
+      return res.status(401).json({
+        success: false,
+        message: 'An error occured, try again'
+      });
+    }
+    const newPassword = user.encryptPassword(password)
+    await User.findByIdAndUpdate(_id, {
+      hashed_password: newPassword
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'password updated successfully'
+    });
+  })  
+}
+
+
+exports.sendPasswordResetEmail = async (req, res) => {
+
+  const user = await User.findOne({email: req.body.email});
+
+  if(!user || !user.email){
+    // this is intentional, so as to delay hackers
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  }
+
+  const API_KEY = process.env.MAILGUN_API_KEY;
+  const DOMAIN = process.env.MAILGUN_DOMAIN;
+  const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, {
+    expiresIn: 600
+  })
+
+  const formData = require('form-data');
+  const Mailgun = require('mailgun.js');
+
+  const mailgun = new Mailgun(formData);
+  const client = mailgun.client({username: 'api', key: API_KEY});
+
+  const messageData = {
+    from: "ultralearnng@gmail.com",
+    to: user.email,
+    subject: "Password Reset",
+    html:  `
+      <div>
+      <style>
+        h1 { color: green; }
+      </style>
+
+      <h1>Click the link below to reset your password</h1>
+      <p>
+        Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
+        HERE</a>
+      </p>
+    </div>`
+  };
+
+  client.messages.create(DOMAIN, messageData)
+  .then((response) => {
+    // console.log(response);
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  });
 }
 
 
