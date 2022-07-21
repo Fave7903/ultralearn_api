@@ -137,6 +137,7 @@ exports.comment = (req, res) => {
   Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
   .populate('comments.postedBy', '_id fullName username imgId')
   .populate('postedBy', '_id fullName username imgId')
+  .sort({created: -1})
   .exec((err, result) => {
     if (err) {
       return res.status(400).json({
