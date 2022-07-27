@@ -1,67 +1,35 @@
 module.exports = (sequelize, Sequelize) => {
-  const Post = sequelize.define("tutorial", {
+  const Post = sequelize.define("post", {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    }, 
     body: {
       type: Sequelize.STRING,
       allowNull: false
     },
     postedBy: {
-      type: Sequelize.STRING,
-      references: {
-        model: 'user',
-        key: "id"
-      }
+      type: Sequelize.STRING, 
     },
     postImgId: {
       type: Sequelize.STRING
     },
     created: {
-      type: Sequelize.DATETIME
+      type: Sequelize.DATE
     },
     updated: {
-      type: Sequelize.DATETIME
+      type: Sequelize.DATE
     }
   }
     ,
     { 
       timestamps: false 
     });
-  return Tutorial;
+  return Post;
 };
 
 
-
-
-
-
-
-
-const postSchema = new mongoose.Schema({
-  body: {
-    type: String,
-    required: true
-  },
-  postedBy: {
-    type: ObjectId,
-    ref: "user"
-  },
-  created: {
-    type: Date,
-    default: Date.now
-  },
-  postImgId: String,
-  updated: Date,
-  likes: [{
-    type: ObjectId,
-    ref: "user"
-  }],
-  comments: [
-    {
-      text: String,
-      created: { type: Date, default: Date.now },
-      postedBy: { type: ObjectId, ref: "user" }
-    }
-  ]
-});
 
 // FOR PERMISSION
 // permission
@@ -165,43 +133,3 @@ const postSchema = new mongoose.Schema({
 
 
 
-
-
-
-
-
-const { verify } = require('jsonwebtoken');
-const { intersection } = require('lodash');
-///////////////////
-const mongoose = require('mongoose')
-const { ObjectId } = mongoose.Schema
-
-const postSchema = new mongoose.Schema({
-  body: {
-    type: String,
-    required: true
-  },
-  postedBy: {
-    type: ObjectId,
-    ref: "user"
-  },
-  created: {
-    type: Date,
-    default: Date.now
-  },
-  postImgId: String,
-  updated: Date,
-  likes: [{
-    type: ObjectId,
-    ref: "user"
-  }],
-  comments: [
-    {
-      text: String,
-      created: { type: Date, default: Date.now },
-      postedBy: { type: ObjectId, ref: "user" }
-    }
-  ]
-});
-
-module.exports = mongoose.model("post", postSchema);

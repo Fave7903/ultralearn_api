@@ -1,4 +1,4 @@
-const dbConfig = require("../config/db.config.js");
+const dbConfig = require("../config/db.config");
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
@@ -16,13 +16,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.user = require("./user.js")(sequelize, Sequelize);
 db.post = require("./post.js")(sequelize, Sequelize);
-db.user.hasMany(db.post, {
-    foreignKey: {
-        name: "postedBy",
-        allowNull: false
-    }
-})
-
-db.post.belongsTo(db.user, { foreignKey:"postedBy" })
-
+db.user.hasMany(db.post, { foreignKey:"id" })
+db.post.belongsTo(db.user, { foreignKey:"id" })
+  
 module.exports = db;

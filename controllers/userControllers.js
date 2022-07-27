@@ -1,10 +1,11 @@
 const _ = require('lodash')
 const User = require('../models/user')
+const db = require('../models')
 const formidable = require('formidable')
 const fs = require('fs')
 
 exports.userByUsername = (req, res, next, username) => {
-    User.findOne({username: req.params.username})
+    db.user.findOne({username: req.params.username})
     .populate('following', '_id username fullName bio, imgId')
     .populate('followers', '_id username fullName bio, imgId')
     .exec((err, user) => {
