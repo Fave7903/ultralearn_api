@@ -39,7 +39,7 @@ exports.getPosts = (req, res) => {
 
 exports.createPost = async(req, res, next) => {
     let post = await new Post(req.body)
-    req.profile.hashed_password = undefined
+    req.profile.password = undefined
     req.profile.salt = undefined
     post.postedBy = req.profile
     post.save((err, result) => {
