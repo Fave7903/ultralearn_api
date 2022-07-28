@@ -1,10 +1,11 @@
 const _ = require('lodash')
 const User = require('../models/user')
+const db = require('../models')
 const formidable = require('formidable')
 const fs = require('fs')
 
 exports.userByUsername = (req, res, next, username) => {
-    User.findOne({username: req.params.username})
+    db.user.findOne({username: req.params.username})
     .populate('following', '_id username fullName bio, imgId')
     .populate('followers', '_id username fullName bio, imgId')
     .exec((err, user) => {
@@ -28,7 +29,7 @@ exports.allUsers = (req, res) => {
   }
 
 exports.getUser = (req, res) => {
-    req.profile.hashed_password = undefined
+    req.profile.password = undefined
     req.profile.salt = undefined
     return res.json(req.profile)
   }
@@ -51,7 +52,7 @@ user.save((err) => {
     if(err) {
     return res.status(400).json({error: "You are not authorized to perform this action"})
     }
-    user.hashed_password = undefined
+    user.password = undefined
     user.salt = undefined
     res.json({ user })
 })
@@ -82,7 +83,7 @@ user.save((err) => {
 //             error: err
 //           })
 //         }
-//         user.hashed_password = undefined
+//         user.password = undefined
 //         user.salt = undefined
 //         res.json(user)
 //       })
@@ -95,7 +96,7 @@ exports.deleteUser = (req, res, next) => {
     if (err) {
       return res.status(400).json({error: err})
     }
-    user.hashed_password = undefined
+    user.password = undefined
     user.salt = undefined
     res.json({ message: "Your account has been deleted successfully!" })
   })
@@ -124,7 +125,7 @@ exports.addFollower = (req, res) => {
         error: err
       })
     }
-    result.hashed_password = undefined
+    result.password = undefined
     result.salt = undefined
     res.json(result)
   })
@@ -154,7 +155,7 @@ exports.removeFollower = (req, res) => {
         error: err
       })
     }
-    result.hashed_password = undefined
+    result.password = undefined
     result.salt = undefined
     res.json(result)
   })
