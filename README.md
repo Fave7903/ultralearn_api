@@ -15,7 +15,7 @@ Method : POST
  
 *response params*
 
-`
+```
 success: 200
 {
     "status": true,
@@ -24,7 +24,7 @@ success: 200
     "age": "",
     ...
 }
-`
+```
 
 
 
