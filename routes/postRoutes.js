@@ -1,5 +1,5 @@
 const express = require('express')
-const { requireSignin } = require('../controllers/authControllers')
+const { requirelogin } = require('../controllers/authControllers')
 const { userByUsername } = require('../controllers/userControllers')
 const { createPostValidator } = require('../validator')
 const { getPosts, 
@@ -19,18 +19,18 @@ const router = express.Router()
 
 router.get('/post/:postId', getPost)
 router.get('/posts', getPosts)
-router.put('/post/like', requireSignin, like)
-router.put('/post/unlike', requireSignin, unlike)
+router.put('/post/like', requirelogin, like)
+router.put('/post/unlike', requirelogin, unlike)
 
 // comments
-router.put('/post/comment', requireSignin, comment)
-router.put('/post/uncomment', requireSignin, uncomment)
+router.put('/post/comment', requirelogin, comment)
+router.put('/post/uncomment', requirelogin, uncomment)
 
-router.post('/post/new/:username', requireSignin, createPost, createPostValidator)
+router.post('/post/new/:username', requirelogin, createPost, createPostValidator)
 
-router.get('/posts/by/:username', requireSignin, postsByUser)
-router.put('/post/:postId', requireSignin, isPoster, updatePost)
-router.delete('/post/:postId', requireSignin, isPoster, deletePost)
+router.get('/posts/by/:username', requirelogin, postsByUser)
+router.put('/post/:postId', requirelogin, isPoster, updatePost)
+router.delete('/post/:postId', requirelogin, isPoster, deletePost)
 
 
 
