@@ -9,23 +9,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false
     },
-    postedBy: {
-      type: Sequelize.STRING, 
-    },
     postImgId: {
       type: Sequelize.STRING
-    },
-    created: {
-      type: Sequelize.DATE
-    },
-    updated: {
-      type: Sequelize.DATE
     }
-  }
-    ,
-    { 
-      timestamps: false 
-    });
+  });
   return Post;
 };
 

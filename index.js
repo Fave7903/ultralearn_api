@@ -1,18 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 var cookieParser = require('cookie-parser')
-const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
-// const fs = require('fs')
-const { v1: uuidv1 } = require('uuid')
 const expressValidator = require('express-validator');
 const app = express()
+const db =  require('./models')
 
-
-
-
-
-dotenv.config() 
 
 const PORT = process.env.PORT || 5000
 
@@ -25,19 +18,11 @@ app.use(expressValidator())
 /// include route files
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
-const postRoutes = require('./routes/postRoutes')
+// const postRoutes = require('./routes/postRoutes')
 app.use('/', authRoutes)
 app.use('/', userRoutes)
-app.use('/', postRoutes)
+// app.use('/', postRoutes)
 
-const db = require("./models");
-db.sequelize.sync()
-  .then(() => {
-    console.log("Synced db.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
-  });
 
 
 
@@ -48,4 +33,13 @@ app.use(function(err, req, res, next) {
   }
 })
 
-app.listen(PORT, () => console.log(`A Node js API is listening on port: ${PORT}`))
+
+app.listen(PORT, async () => {
+  try {
+    await db.sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+  console.log(`A Node js API is listening on port: ${PORT}`)
+})

@@ -1,36 +1,28 @@
-const _ = require('lodash')
-const User = require('../models/user')
 const db = require('../models')
-const formidable = require('formidable')
-const fs = require('fs')
 
-exports.userByUsername = (req, res, next, username) => {
-    db.user.findOne({username: req.params.username})
-    .populate('following', '_id username fullName bio, imgId')
-    .populate('followers', '_id username fullName bio, imgId')
-    .exec((err, user) => {
-        if (err || !user) {
-            return res.status(403).json({
-                error: "This user does not exist"
-            })
-        }
-        req.profile = user
-        next()
-    })
+
+exports.userByUsername = async (req, res, next, username) => {
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    if (user === null) {
+      return res.status(403).json({
+        error: "This user does not exist"
+      })
+    }
+    req.profile = user
+    next()
 }
 
-exports.allUsers = (req, res) => {
-    User.find((err, users) => {
-      if (err) {
-        return res.status(400).json({error: err})
-      }
-      res.json(users)
-    }).select("fullName username email location gender dateOfBirth bio skillInterests updated created imgId")
+exports.allUsers = async (req, res) => {
+    try {
+    const users = await db.user.findAll({attributes: {exclude: ['password']}})
+    return res.status(200).json(users)
+    } catch (error) {
+      return res.json({error})
+    }    
   }
 
 exports.getUser = (req, res) => {
     req.profile.password = undefined
-    req.profile.salt = undefined
     return res.json(req.profile)
   }
 
@@ -44,18 +36,16 @@ exports.hasAuthorization = (req, res, next) => {
     }
   }
 
-exports.updateUser = (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
 let user = req.profile
-user = _.extend(user, req.body)
-user.updated = Date.now()
-user.save((err) => {
-    if(err) {
-    return res.status(400).json({error: "You are not authorized to perform this action"})
-    }
-    user.password = undefined
-    user.salt = undefined
-    res.json({ user })
-})
+try {
+  await user.update(req.body)
+  user.password = undefined
+  return res.status(200).json(user)
+} catch (error) {
+  return res.json(error)
+}
+
 }
 
 
@@ -90,16 +80,16 @@ user.save((err) => {
 //     })
 // }
 
-exports.deleteUser = (req, res, next) => {
+exports.deleteUser = async (req, res, next) => {
   let user = req.profile
-  user.remove((err, user) => {
-    if (err) {
-      return res.status(400).json({error: err})
-    }
-    user.password = undefined
-    user.salt = undefined
-    res.json({ message: "Your account has been deleted successfully!" })
-  })
+  try {
+    await user.destroy()
+    return res.status(200).json({
+      message: "Your account has been deleted successfully"
+    })
+  } catch (error) {
+    return res.json(error)
+  }
 }
 
 // follow unfollow

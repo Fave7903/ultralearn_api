@@ -43,23 +43,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      salt: {
-        type: Sequelize.STRING,
-      },
-      created: {
-        type: Sequelize.DATE,
-      },
-      updated: {
-        type: Sequelize.DATE,
-      },
-      postedBy: {
-        type: Sequelize.STRING,
-      },
       published: {
         type: Sequelize.BOOLEAN,
       },
-    },
-    { timestamps: false }
+    }
   );
   User.addHook(
     "beforeCreate",
