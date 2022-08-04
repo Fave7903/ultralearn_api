@@ -1,4 +1,5 @@
-const Post = require('../models/post')
+// const Post = require('../models/post')
+const db = require("../models");
 const formidable = require('formidable')
 const fs = require('fs')
 const _ = require('lodash')
@@ -20,36 +21,52 @@ exports.postById = (req, res, next, id) => {
   
 }
 
-exports.getPost = (req, res) => {
-    return res.json(req.post)
+exports.getPost = async (req, res) => {
+  console.log('got here')
+  try{
+    const post = await db.post.findAll({
+      where: {
+        id: Number(req.params.id)
+      }
+    });
+    return res.status(200).json({
+      status: true,
+      post
+    });
+  }catch(err){
+    return res.status(500).json({
+      message: err.message || "Some error occurred while fetching the post."
+    });
   }
+}
 
-exports.getPosts = (req, res) => {
-  const posts = Post.find()
-    .populate("postedBy", "_id username fullName bio imgId")
-    .populate('comments', 'text created')
-    .populate('comments.postedBy', '_id fullName username imgId')
-    .select("_id body created postImgId likes comments postedBy")
-    .sort({created: -1})
-    .then((posts) => {
-      res.json(posts)
-    })
-    .catch(err => console.log(err))
+exports.getPosts = async (req, res) => {
+  try{
+    const post = await db.post.findAll();
+    return res.status(200).json({
+      status: true,
+      post
+    });
+  }catch(err){
+    return res.status(500).json({
+      message: err.message || "Some error occurred while fetching the posts."
+    });
   }
+}
 
 exports.createPost = async(req, res, next) => {
-    let post = await new Post(req.body)
-    req.profile.password = undefined
-    req.profile.salt = undefined
-    post.postedBy = req.profile
-    post.save((err, result) => {
-      if (err) {
-        return res.status(400).json({
-          error: err
-        })
-      }
-      res.json(result)
-    })
+    try{
+      // Create a POST
+      const result = await db.post.create(req.body);
+      return res.status(200).json({
+        status: true,
+        post: result
+      });
+    }catch(err){
+      return res.status(500).json({
+        message: err.message || "Some error occurred while creating the Tutorial."
+      });
+    }
   }
 
 exports.postsByUser = (req, res) => {

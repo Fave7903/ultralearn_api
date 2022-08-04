@@ -18,10 +18,11 @@ app.use(expressValidator())
 /// include route files
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
-// const postRoutes = require('./routes/postRoutes')
+const postRoutes = require('./routes/postRoutes')
+
 app.use('/', authRoutes)
 app.use('/', userRoutes)
-// app.use('/', postRoutes)
+app.use('/', postRoutes)
 
 
 
@@ -37,6 +38,7 @@ app.use(function(err, req, res, next) {
 app.listen(PORT, async () => {
   try {
     await db.sequelize.authenticate();
+    await db.sequelize.sync()
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
