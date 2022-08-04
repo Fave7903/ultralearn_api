@@ -1,8 +1,8 @@
 module.exports = {
     HOST: "localhost",
     USER: "root",
-    PASSWORD: "your MYSQL password",
-    DB: "ultralearn",
+    PASSWORD: "password",
+    DB: "ultralearn_db",
     dialect: "mysql",
     pool: {
       max: 5,

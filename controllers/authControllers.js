@@ -63,22 +63,22 @@ exports.signout = (req, res) => {
   return res.json({ message: "Signout success!" })
 }
 
-// exports.requirelogin = expressJwt({
-//   secret: process.env.JWT_SECRET,
-//   algorithms: ["HS256"], 
-//   userProperty: "auth",
-// });
+exports.requirelogin = expressJwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"], 
+  userProperty: "auth",
+});
 
-exports.requirelogin = async (req, res, next) => {
-  const { token } = req.body;
-  try{
-    const jwtValue = await jwt.verify(token, process.env.JWT_SECRET);
-    req.decoded = jwtValue;
-    next();
-  }catch(e){
-    return res.status(401).json({
-      error: 'Unauthorized, please register'
-    });
-  }
+// exports.requirelogin = async (req, res, next) => {
+//   const { token } = req.body;
+//   try{
+//     const jwtValue = await jwt.verify(token, process.env.JWT_SECRET);
+//     req.decoded = jwtValue;
+//     next();
+//   }catch(e){
+//     return res.status(401).json({
+//       error: 'Unauthorized, please register'
+//     });
+//   }
 
-}
+// }

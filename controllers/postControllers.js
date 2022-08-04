@@ -4,29 +4,21 @@ const formidable = require('formidable')
 const fs = require('fs')
 const _ = require('lodash')
 
-exports.postById = (req, res, next, id) => {
-  Post.findById(id)
-    .populate("postedBy", "id username fullName bio imgId")
-    .populate('comments', 'text created')
-    .populate('comments.postedBy', '_id fullName username imgId')
-    .exec((err, post) => {
-      if(err || !post) {
-        return res.status(400).json({
-          error: err
-        })
-      }
+exports.postById = async (req, res, next, id) => {
+  try {
+    const post = await db.post.findOne({where: {id: id}})
       req.post = post
       next()
-    })
-  
+  } catch (error) {
+    return res.json({error})
+  }
 }
 
 exports.getPost = async (req, res) => {
-  console.log('got here')
   try{
-    const post = await db.post.findAll({
+    const post = await db.post.findOne({
       where: {
-        id: Number(req.params.id)
+        id: req.params.postId
       }
     });
     return res.status(200).json({
@@ -54,10 +46,11 @@ exports.getPosts = async (req, res) => {
   }
 }
 
-exports.createPost = async(req, res, next) => {
+exports.create = async(req, res, next) => {
     try{
       // Create a POST
-      const result = await db.post.create(req.body);
+      const user = await db.user.findOne({where: {username: req.params.username}})
+      const result = await user.createPost(req.body);
       return res.status(200).json({
         status: true,
         post: result
@@ -69,22 +62,19 @@ exports.createPost = async(req, res, next) => {
     }
   }
 
-exports.postsByUser = (req, res) => {
-  Post.find({postedBy: req.profile._id})
-    .populate("postedBy", "_id username fullName bio imgId likes")
-    .sort({created: -1})
-    .exec((err, posts) => {
-      if (err) {
-        return res.status(400).json({
-          error: err
-        })
-      }
-      res.json(posts)
-    })
+exports.postsByUser = async (req, res) => {
+  try {
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const posts = await db.post.findAll({where: {userId: user.id}})
+    return res.status(200).json(posts)
+  } catch (error) {
+    return res.json({message: error.message})
+  }
+
 }
 
 exports.isPoster = (req, res, next) => {
-  let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+  let isPoster = req.post && req.auth && req.post.userId == req.auth._id
   if (!isPoster) {
     return res.status(403).json({
       error: "User is not authorized"

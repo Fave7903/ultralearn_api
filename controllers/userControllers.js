@@ -2,7 +2,7 @@ const db = require('../models')
 
 
 exports.userByUsername = async (req, res, next, username) => {
-    const user = await db.user.findOne({where: {username: req.params.username}})
+    const user = await db.user.findOne({where: {username: username}})
     if (user === null) {
       return res.status(403).json({
         error: "This user does not exist"

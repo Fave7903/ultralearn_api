@@ -3,7 +3,7 @@ const { requirelogin } = require('../controllers/authControllers')
 const { userByUsername } = require('../controllers/userControllers')
 const { createPostValidator } = require('../validator/index')
 const { getPosts, 
-    createPost, 
+    create, 
     postsByUser, 
     postById, 
     isPoster, 
@@ -26,7 +26,7 @@ router.put('/post/unlike', requirelogin, unlike)
 router.put('/post/comment', requirelogin, comment)
 router.put('/post/uncomment', requirelogin, uncomment)
 
-router.post('/post/new/:username', requirelogin, createPostValidator, createPost)
+router.post('/post/new/:username', requirelogin, createPostValidator, create)
 
 router.get('/posts/by/:username', requirelogin, postsByUser)
 router.put('/post/:postId', requirelogin, isPoster, updatePost)
