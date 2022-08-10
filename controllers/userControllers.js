@@ -52,7 +52,8 @@ exports.updateUser = async (req, res, next) => {
 exports.follow = async (req, res, next) => {
   const followed_userid = req.params.userid
   const token = req.header('token')
-
+//////////////////////////////////////////////////////////////////////////////
+///Todo: validate token and get user id, else request authentication
   //validate token
   if (token != "valid") {
     return res.status(401).json({
@@ -62,6 +63,10 @@ exports.follow = async (req, res, next) => {
   }
 
   const userid = 2; // fetch loggedin user profile from token
+///////////////////////////////////////////////////////////////////////
+
+
+
   // verify user can be followed 
   let status_check = await userService.isFollowed(followed_userid, userid)
   if (status_check) {
@@ -98,6 +103,9 @@ exports.unfollow = async (req, res, next) => {
   const followed_userid = req.params.userid
   const token = req.header('token')
 
+
+  //////////////////////////////////////////////////////////////////////////////
+///Todo: validate token and get user id, else request authentication
   //validate token
   if (token != "valid") {
     return res.status(401).json({
@@ -107,8 +115,7 @@ exports.unfollow = async (req, res, next) => {
   }
 
   const userid = 2; // fetch loggedin user profile from token
-  // verify user can be followed 
-   
+///////////////////////////////////////////////////////////////////////
 
     let unfollow_user = userService.doUnFollower(followed_userid, userid)
     if (unfollow_user) {
