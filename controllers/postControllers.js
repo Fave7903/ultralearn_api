@@ -83,30 +83,35 @@ exports.isPoster = (req, res, next) => {
   next()
 }
 
-exports.updatePost = (req, res, next) => {
-  let post = req.post
-  post = _.extend(post, req.body)
-  post.updated = Date.now()
-  post.save((err) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({ post })
-  })
+exports.updatePost = async (req, res, next) => {
+  try{
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const usr_update = await post.update({where: {userId: user.id}});
+    return res.status(200).json({Message: 'User Updated', usr_update: usr_update})
+  }catch (error){
+    return res.json({message: error.message})
+  }
+  // let post = req.post
+  // post = _.extend(post, req.body)
+  // post.updated = Date.now()
+  // post.save((err) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   res.json({ post })
+  // })
 }
 
-exports.deletePost = (req, res) => {
-  let post = req.post
-  post.remove((err, post) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({message: "Post succesfully deleted!"})
-  })
+exports.deletePost = async (req, res) => {
+  try {
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const posts = await db.post.destroy({where: {userId: user.id}})
+    return res.status(200).json({Message: 'Post deleted successfully'})
+  } catch (error) {
+    return res.json({message: error.message})
+  }
 }
 
 exports.like = (req, res) => {
