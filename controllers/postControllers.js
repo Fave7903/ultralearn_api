@@ -85,9 +85,9 @@ exports.isPoster = (req, res, next) => {
 
 exports.updatePost = async (req, res, next) => {
   try{
-    const user = await db.user.findOne({where: {username: req.params.username}})
-    const usr_update = await post.update({where: {userId: user.id}});
-    return res.status(200).json({Message: 'User Updated', usr_update: usr_update})
+    const post = req.post
+    await post.update(req.body)
+    return res.status(200).json(post)
   }catch (error){
     return res.json({message: error.message})
   }
@@ -106,8 +106,8 @@ exports.updatePost = async (req, res, next) => {
 
 exports.deletePost = async (req, res) => {
   try {
-    const user = await db.user.findOne({where: {username: req.params.username}})
-    const posts = await db.post.destroy({where: {userId: user.id}})
+    const post = req.post
+    await post.destroy()
     return res.status(200).json({Message: 'Post deleted successfully'})
   } catch (error) {
     return res.json({message: error.message})
