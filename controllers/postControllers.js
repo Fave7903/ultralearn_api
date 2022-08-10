@@ -34,10 +34,11 @@ exports.getPost = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try{
-    const post = await db.post.findAll();
+    const posts = await db.post.findAll();
     return res.status(200).json({
       status: true,
-      post
+      posts,
+      postLen: posts.length
     });
   }catch(err){
     return res.status(500).json({
@@ -137,24 +138,27 @@ exports.unlike = (req, res) => {
   })
 }
 
-exports.comment = (req, res) => {
-  let comment = req.body.comment
-  comment.postedBy = req.body.userId
+exports.comment = async (req, res) => {
+  // let comment = req.body.comment
+  // comment.postedBy = req.body.userId
 
-  Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
-  .populate('comments.postedBy', '_id fullName username imgId')
-  .populate('postedBy', '_id fullName username imgId')
-  .sort({created: -1})
-  .exec((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    else {
-      res.json(result)
-    }
-  })
+  const comment = await db.comment.create(req.body)
+  return res.json(comment)
+
+  // Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
+  // .populate('comments.postedBy', '_id fullName username imgId')
+  // .populate('postedBy', '_id fullName username imgId')
+  // .sort({created: -1})
+  // .exec((err, result) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   else {
+  //     res.json(result)
+  //   }
+  // })
 }
 
 exports.uncomment = (req, res) => {
