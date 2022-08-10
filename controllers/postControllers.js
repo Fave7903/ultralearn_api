@@ -1,73 +1,80 @@
-const Post = require('../models/post')
+// const Post = require('../models/post')
+const db = require("../models");
 const formidable = require('formidable')
 const fs = require('fs')
 const _ = require('lodash')
 
-exports.postById = (req, res, next, id) => {
-  Post.findById(id)
-    .populate("postedBy", "id username fullName bio imgId")
-    .populate('comments', 'text created')
-    .populate('comments.postedBy', '_id fullName username imgId')
-    .exec((err, post) => {
-      if(err || !post) {
-        return res.status(400).json({
-          error: err
-        })
-      }
+exports.postById = async (req, res, next, id) => {
+  try {
+    const post = await db.post.findOne({where: {id: id}})
       req.post = post
       next()
-    })
-  
+  } catch (error) {
+    return res.json({error})
+  }
 }
 
-exports.getPost = (req, res) => {
-    return res.json(req.post)
-  }
-
-exports.getPosts = (req, res) => {
-  const posts = Post.find()
-    .populate("postedBy", "_id username fullName bio imgId")
-    .populate('comments', 'text created')
-    .populate('comments.postedBy', '_id fullName username imgId')
-    .select("_id body created postImgId likes comments postedBy")
-    .sort({created: -1})
-    .then((posts) => {
-      res.json(posts)
-    })
-    .catch(err => console.log(err))
-  }
-
-exports.createPost = async(req, res, next) => {
-    let post = await new Post(req.body)
-    req.profile.password = undefined
-    req.profile.salt = undefined
-    post.postedBy = req.profile
-    post.save((err, result) => {
-      if (err) {
-        return res.status(400).json({
-          error: err
-        })
+exports.getPost = async (req, res) => {
+  try{
+    const post = await db.post.findOne({
+      where: {
+        id: req.params.postId
       }
-      res.json(result)
-    })
+    });
+    return res.status(200).json({
+      status: true,
+      post
+    });
+  }catch(err){
+    return res.status(500).json({
+      message: err.message || "Some error occurred while fetching the post."
+    });
+  }
+}
+
+exports.getPosts = async (req, res) => {
+  try{
+    const post = await db.post.findAll();
+    return res.status(200).json({
+      status: true,
+      post
+    });
+  }catch(err){
+    return res.status(500).json({
+      message: err.message || "Some error occurred while fetching the posts."
+    });
+  }
+}
+
+exports.create = async(req, res, next) => {
+    try{
+      // Create a POST
+      const user = await db.user.findOne({where: {username: req.params.username}})
+      const result = await user.createPost(req.body);
+      return res.status(200).json({
+        status: true,
+        post: result
+      });
+    }catch(err){
+      return res.status(500).json({
+        message: err.message || "Some error occurred while creating the Tutorial."
+      });
+    }
   }
 
-exports.postsByUser = (req, res) => {
-  Post.find({postedBy: req.profile._id})
-    .populate("postedBy", "_id username fullName bio imgId likes")
-    .sort({created: -1})
-    .exec((err, posts) => {
-      if (err) {
-        return res.status(400).json({
-          error: err
-        })
-      }
-      res.json(posts)
-    })
+exports.postsByUser = async (req, res) => {
+  try {
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const posts = await db.post.findAll({where: {userId: user.id}})
+    return res.status(200).json(posts)
+  } catch (error) {
+    return res.json({message: error.message})
+  }
+
 }
 
 exports.isPoster = (req, res, next) => {
-  let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+  let isPoster = req.post && req.auth && req.post.userId == req.auth._id
   if (!isPoster) {
     return res.status(403).json({
       error: "User is not authorized"
@@ -76,30 +83,35 @@ exports.isPoster = (req, res, next) => {
   next()
 }
 
-exports.updatePost = (req, res, next) => {
-  let post = req.post
-  post = _.extend(post, req.body)
-  post.updated = Date.now()
-  post.save((err) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({ post })
-  })
+exports.updatePost = async (req, res, next) => {
+  try{
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const usr_update = await post.update({where: {userId: user.id}});
+    return res.status(200).json({Message: 'User Updated', usr_update: usr_update})
+  }catch (error){
+    return res.json({message: error.message})
+  }
+  // let post = req.post
+  // post = _.extend(post, req.body)
+  // post.updated = Date.now()
+  // post.save((err) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   res.json({ post })
+  // })
 }
 
-exports.deletePost = (req, res) => {
-  let post = req.post
-  post.remove((err, post) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({message: "Post succesfully deleted!"})
-  })
+exports.deletePost = async (req, res) => {
+  try {
+    const user = await db.user.findOne({where: {username: req.params.username}})
+    const posts = await db.post.destroy({where: {userId: user.id}})
+    return res.status(200).json({Message: 'Post deleted successfully'})
+  } catch (error) {
+    return res.json({message: error.message})
+  }
 }
 
 exports.like = (req, res) => {
