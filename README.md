@@ -157,13 +157,10 @@ success: 200
 
 `/user/:userid/follow` 
 
-Method : PUT
+Method : GET
 ***request params***
 ```
-{
-    token,
-    user_to_follow
-}
+Request Header: token
 ```
  
 ***response params***
@@ -177,12 +174,12 @@ success: 200
 ```
 `/user/:userid/unfollow` 
 
-Method : PUT
+Method : GET
 ***request params***
 ```
 {
-    token,
-    user_to_unfollow
+    Request Header: token
+
 }
 ```
  

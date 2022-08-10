@@ -78,7 +78,7 @@ exports.follow = async (req, res, next) => {
         if (user) {
           let add_user = userService.addFollower(followed_userid, userid)
           res.status(200).json({
-            status: false,
+            status: true,
             message: user.fullName + " was followed successfully!"
           })
         } else {
@@ -114,7 +114,7 @@ exports.unfollow = async (req, res, next) => {
     if (unfollow_user) {
 
       res.status(200).json({
-        status: false,
+        status: true,
         message: "user unfollowed!"
       })
     } else {
