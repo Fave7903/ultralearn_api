@@ -1,8 +1,11 @@
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../.env')});
+
 module.exports = {
-    HOST: "localhost",
-    USER: "root",
-    PASSWORD: "femi7903",
-    DB: "ultralearn_db",
+    HOST:  process.env.MYSQL_HOST,
+    USER:  process.env.MYSQL_USERNAME,
+    PASSWORD:  process.env.MYSQL_PASSWORD,
+    DB: process.env.MYSQL_DATABASE,
     dialect: "mysql",
     pool: {
       max: 5,

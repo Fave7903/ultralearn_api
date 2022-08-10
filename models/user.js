@@ -53,4 +53,4 @@ module.exports = (sequelize, Sequelize) => {
     (user) => (user.password = bcrypt.hashSync(user.password, 10))
   );
   return User;
-};
+}; 

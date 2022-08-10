@@ -4,10 +4,11 @@ var cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const expressValidator = require('express-validator');
 const app = express()
+ const path = require('path');
+require('dotenv').config();
 const db =  require('./models')
-
-
 const PORT = process.env.PORT || 5000
+
 
 app.use(cors())
 
@@ -18,7 +19,7 @@ app.use(expressValidator())
 /// include route files
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
-const postRoutes = require('./routes/postRoutes')
+const postRoutes = require('./routes/postRoutes') 
 
 app.use('/', authRoutes)
 app.use('/', userRoutes)

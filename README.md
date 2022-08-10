@@ -90,7 +90,7 @@ success: 200
 }
 ```
 
-`/ul/:username`
+`/ul/:username` `/user/:username`
 
 Method: GET
 ***response params***
@@ -102,7 +102,7 @@ success: 200
 }
 ```
 
-`/ul/:username` 
+`/ul/:username`  `/user/:username`
 
 Method : PUT
 ***request params***
@@ -132,7 +132,7 @@ success: 200
     user
 }
 ```
-`/ul/:username`
+`/user/:username`
 
 Method: DELETE
 ***response params***
@@ -154,15 +154,15 @@ success: 200
     users
 }
 ```
-`/user/follow` 
+
+`/user/:userid/follow` 
 
 Method : PUT
 ***request params***
 ```
 {
     token,
-    userId,
-    followId
+    user_to_follow
 }
 ```
  
@@ -175,15 +175,14 @@ success: 200
     user
 }
 ```
-`/user/unfollow` 
+`/user/:userid/unfollow` 
 
 Method : PUT
 ***request params***
 ```
 {
     token,
-    userId,
-    unfollowId
+    user_to_unfollow
 }
 ```
  
