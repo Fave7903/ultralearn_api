@@ -17,6 +17,7 @@ db.user = require("./user.js")(sequelize, Sequelize);
 db.post = require("./post.js")(sequelize, Sequelize);
 db.follower = require("./follower.js")(sequelize, Sequelize);
 db.comment = require("./comment.js")(sequelize, Sequelize);
+db.like = require("./like.js")(sequelize, Sequelize);
 db.user.hasMany(db.post)
 db.user.hasMany(db.follower)
 db.post.belongsTo(db.user)
