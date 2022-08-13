@@ -36,7 +36,8 @@ async function addFollower(followedid, followerid){
     try{
         const user = await models.follower.create({
             userId: followedid, 
-            followerId: followerid}
+            followerId: followerid
+        }
             );
 
          return (user )? user :false
@@ -51,8 +52,9 @@ async function addFollower(followedid, followerid){
 async function doUnFollower(followedid, followerid){
     try{
         const user = await models.follower.destroy({where:{
-            userId: followedid, 
-            followerId: followerid}}
+            userId: followedid,
+            followerId: followerid
+            }}
             );
  
          return (user )? true :false

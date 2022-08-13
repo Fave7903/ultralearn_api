@@ -51,20 +51,9 @@ exports.updateUser = async (req, res, next) => {
 
 exports.follow = async (req, res, next) => {
   const followed_userid = req.params.userid
-  const token = req.header('token')
-//////////////////////////////////////////////////////////////////////////////
-///Todo: validate token and get user id, else request authentication
-  //validate token
-  if (token != "valid") {
-    return res.status(401).json({
-      status: false,
-      message: "Invalid token"
-    })
-  }
 
-  const userid = 2; // fetch loggedin user profile from token
-///////////////////////////////////////////////////////////////////////
 
+  const userid = req.body.userId; 
 
 
   // verify user can be followed 
@@ -104,19 +93,7 @@ exports.unfollow = async (req, res, next) => {
   const token = req.header('token')
 
 
-  //////////////////////////////////////////////////////////////////////////////
-///Todo: validate token and get user id, else request authentication
-  //validate token
-  if (token != "valid") {
-    return res.status(401).json({
-      status: false,
-      message: "Invalid token"
-    })
-  }
-
-  const userid = 2; // fetch loggedin user profile from token
-///////////////////////////////////////////////////////////////////////
-
+  const userid = req.body.userId;
     let unfollow_user = userService.doUnFollower(followed_userid, userid)
     if (unfollow_user) {
 
@@ -180,30 +157,30 @@ exports.deleteUser = async (req, res, next) => {
 
 // follow unfollow
 
-exports.addFollowing = (req, res, next) => {
-  User.findByIdAndUpdate(req.body.userId, { $push: { following: req.body.followId } }, (err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    next()
-  })
-}
+// exports.addFollowing = (req, res, next) => {
+//   User.findByIdAndUpdate(req.body.userId, { $push: { following: req.body.followId } }, (err, result) => {
+//     if (err) {
+//       return res.status(400).json({
+//         error: err
+//       })
+//     }
+//     next()
+//   })
+// }
 
 
 // remove follow unfollow
 
-exports.removeFollowing = (req, res, next) => {
-  User.findByIdAndUpdate(req.body.userId, { $pull: { following: req.body.unfollowId } }, (err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    next()
-  })
-}
+// exports.removeFollowing = (req, res, next) => {
+//   User.findByIdAndUpdate(req.body.userId, { $pull: { following: req.body.unfollowId } }, (err, result) => {
+//     if (err) {
+//       return res.status(400).json({
+//         error: err
+//       })
+//     }
+//     next()
+//   })
+// }
 
 exports.findPeople = (req, res) => {
   let following = req.profile.following

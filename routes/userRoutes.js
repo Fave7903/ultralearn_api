@@ -20,8 +20,8 @@ const router = express.Router()
 // router.put('/user/unfollow', requireSignin, removeFollowing, removeFollower)
 
 router.get('/users', allUsers)
-router.get('/user/:userid/follow', follow )
-router.get('/user/:userid/unfollow', unfollow )
+router.get('/user/:userid/follow', requirelogin, follow )
+router.get('/user/:userid/unfollow', requirelogin, unfollow )
 
 router.get('/ul/:username', getUser)
 router.put('/ul/:username', requirelogin, updateUser)

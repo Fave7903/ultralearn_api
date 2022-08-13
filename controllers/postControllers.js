@@ -84,44 +84,55 @@ exports.isPoster = (req, res, next) => {
   next()
 }
 
-exports.updatePost = (req, res, next) => {
-  let post = req.post
-  post = _.extend(post, req.body)
-  post.updated = Date.now()
-  post.save((err) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({ post })
-  })
+exports.updatePost = async (req, res, next) => {
+  try{
+    const post = req.post
+    await post.update(req.body)
+    return res.status(200).json(post)
+  }catch (error){
+    return res.json({message: error.message})
+  }
+  // let post = req.post
+  // post = _.extend(post, req.body)
+  // post.updated = Date.now()
+  // post.save((err) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   res.json({ post })
+  // })
 }
 
-exports.deletePost = (req, res) => {
-  let post = req.post
-  post.remove((err, post) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json({message: "Post succesfully deleted!"})
-  })
+exports.deletePost = async (req, res) => {
+  try {
+    const post = req.post
+    await post.destroy()
+    return res.status(200).json({Message: 'Post deleted successfully'})
+  } catch (error) {
+    return res.json({message: error.message})
+  }
 }
 
-exports.like = (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, {new: true})
-  .exec((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    else {
-      res.json(result)
-    }
-  })
+
+exports.like = async (req, res) => {
+
+  const like = await db.like.create(req.body)
+  return res.json(like)
+
+
+  // Post.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, {new: true})
+  // .exec((err, result) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   else {
+  //     res.json(result)
+  //   }
+  // })
 }
 
 exports.unlike = (req, res) => {
