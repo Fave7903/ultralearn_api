@@ -13,7 +13,8 @@ const { getPosts,
     unlike,
     getPost,
     comment,
-    uncomment
+    postComments
+    // uncomment
 } = require('../controllers/postControllers')
 const router = express.Router()
 
@@ -24,7 +25,9 @@ router.put('/post/unlike', requirelogin, unlike)
 
 // comments
 router.put('/post/comment', requirelogin, comment)
-router.put('/post/uncomment', requirelogin, uncomment)
+
+router.get('/post/:postId/comments', postComments)
+// router.put('/post/uncomment', requirelogin, uncomment)
 
 router.post('/post/new/:username', requirelogin, createPostValidator, create)
 

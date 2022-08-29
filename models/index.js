@@ -21,6 +21,10 @@ db.like = require("./like.js")(sequelize, Sequelize);
 db.user.hasMany(db.post)
 db.user.hasMany(db.follower)
 db.post.belongsTo(db.user)
+db.post.hasMany(db.comment)
+db.comment.belongsTo(db.post)
+db.user.hasMany(db.comment)
+db.comment.belongsTo(db.user)
 db.follower.belongsTo(db.user)
   
 module.exports = db; 

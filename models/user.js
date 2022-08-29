@@ -46,6 +46,12 @@ module.exports = (sequelize, Sequelize) => {
       published: {
         type: Sequelize.BOOLEAN,
       },
+      followers_len: {
+        type: Sequelize.INTEGER
+      },
+      following_len: {
+        type: Sequelize.INTEGER
+      }
     }
   );
   User.addHook(

@@ -6,7 +6,21 @@ const _ = require('lodash')
 
 exports.postById = async (req, res, next, id) => {
   try {
-    const post = await db.post.findOne({where: {id: id}})
+    const post = await db.post.findOne({where: {id: id}, 
+      order: [[db.comment, 'createdAt', 'DESC']],
+      include: [
+        {
+        model: db.user,
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+      },
+      {
+        model: db.comment,
+        include: {
+          model: db.user,
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        }
+      }
+    ]})
       req.post = post
       next()
   } catch (error) {
@@ -14,17 +28,9 @@ exports.postById = async (req, res, next, id) => {
   }
 }
 
-exports.getPost = async (req, res) => {
+exports.getPost = (req, res) => {
   try{
-    const post = await db.post.findOne({
-      where: {
-        id: req.params.postId
-      }
-    });
-    return res.status(200).json({
-      status: true,
-      post
-    });
+    return res.status(200).json(req.post);
   }catch(err){
     return res.status(500).json({
       message: err.message || "Some error occurred while fetching the post."
@@ -34,12 +40,24 @@ exports.getPost = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try{
-    const posts = await db.post.findAll();
-    return res.status(200).json({
-      status: true,
-      posts,
-      postLen: posts.length
+    const posts = await db.post.findAll({
+      include: [
+      {
+        model: db.user,
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+      },
+      {
+        model: db.comment,
+        include: {
+          model: db.user,
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        }
+      }
+    ],
+      order: [['createdAt', 'DESC']]
     });
+
+    return res.status(200).json(posts);
   }catch(err){
     return res.status(500).json({
       message: err.message || "Some error occurred while fetching the posts."
@@ -66,7 +84,19 @@ exports.create = async(req, res, next) => {
 exports.postsByUser = async (req, res) => {
   try {
     const user = await db.user.findOne({where: {username: req.params.username}})
-    const posts = await db.post.findAll({where: {userId: user.id}})
+    const posts = await db.post.findAll({where: {userId: user.id}, include: [
+      {
+        model: db.user,
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+      },
+      {
+        model: db.comment,
+        include: {
+          model: db.user,
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        }
+      }
+    ]})
     return res.status(200).json(posts)
   } catch (error) {
     return res.json({message: error.message})
@@ -119,6 +149,11 @@ exports.deletePost = async (req, res) => {
 exports.like = async (req, res) => {
 
   const like = await db.like.create(req.body)
+  const post = await db.post.findOne({where: {id: req.body.postId}})
+  const likes = await db.like.findAll({where: {postId: req.body.postId}})
+  post.update({
+    likes_len: likes.length
+  })
   return res.json(like)
 
 
@@ -135,18 +170,22 @@ exports.like = async (req, res) => {
   // })
 }
 
-exports.unlike = (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$pull: {likes: req.body.userId}}, {new: true})
-  .exec((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    else {
-      res.json(result)
-    }
-  })
+exports.unlike = async (req, res) => {
+
+  const like = await db.like.findOne({where: {userId: req.body.userId, postId: req.body.postId}})
+  like.destroy()
+  res.json({message: "unliked"})
+  // Post.findByIdAndUpdate(req.body.postId, {$pull: {likes: req.body.userId}}, {new: true})
+  // .exec((err, result) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   else {
+  //     res.json(result)
+  //   }
+  // })
 }
 
 exports.comment = async (req, res) => {
@@ -154,6 +193,11 @@ exports.comment = async (req, res) => {
   // comment.postedBy = req.body.userId
 
   const comment = await db.comment.create(req.body)
+  const post = await db.post.findOne({where: {id: req.body.postId}})
+  const comments = await db.comment.findAll({where: {postId: req.body.postId}})
+  post.update({
+    comments_len: comments.length
+  })
   return res.json(comment)
 
   // Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
@@ -172,20 +216,33 @@ exports.comment = async (req, res) => {
   // })
 }
 
-exports.uncomment = (req, res) => {
-  let comment = req.body.comment
-  req.body.postId
-  Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: {_id: comment._id}}}, {new: true})
-  .populate('comments.postedBy', '_id fullName username imgId')
-  .populate('postedBy', '_id fullName username imgId')
-  .exec((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    else {
-      res.json(result)
-    }
-  })
+exports.postComments = async (req, res) => {
+  try {
+    const comments = await db.comment.findAll({where: {postId: req.params.postId}})
+    return res.status(200).json(comments)
+  } catch (error) {
+    return res.status(500).json({error})
+  }
+
 }
+
+// exports.uncomment = async (req, res) => {
+
+
+
+  // let comment = req.body.comment
+  // req.body.postId
+  // Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: {_id: comment._id}}}, {new: true})
+  // .populate('comments.postedBy', '_id fullName username imgId')
+  // .populate('postedBy', '_id fullName username imgId')
+  // .exec((err, result) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   else {
+  //     res.json(result)
+  //   }
+  // })
+// }

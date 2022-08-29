@@ -21,12 +21,12 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
   const user = await db.user.findOne({where: {email: req.body.email}})
-  const password_valid = await bcrypt.compare(req.body.password, user.password)
   if (user === null) {
     return res.status(401).json({
       error: "User with that email does not exist, Please signup"
     })
   }
+  const password_valid = await bcrypt.compare(req.body.password, user.password)
   if (!password_valid) {
     return res.status(401).json({
       error: "Email and password do not match."

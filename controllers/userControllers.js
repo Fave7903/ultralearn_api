@@ -1,7 +1,6 @@
 const db = require('../models')
 const userService = require("../services/userService")
 
-
 exports.userByUsername = async (req, res, next, username) => {
   const user = await db.user.findOne({ where: { username: username } })
   if (user === null) {
@@ -9,6 +8,12 @@ exports.userByUsername = async (req, res, next, username) => {
       error: "This user does not exist"
     })
   }
+  const userFollowers = await db.follower.findAll({where: {userId: user.id}})
+  const userFollowing = await db.follower.findAll({where: {followerId: user.id}})
+  user.update({
+    followers_len: userFollowers.length,
+    following_len: userFollowing.length
+  })
   req.profile = user
   next()
 }

@@ -11,6 +11,14 @@ module.exports = (sequelize, Sequelize) => {
     },
     postImgId: {
       type: Sequelize.STRING
+    },
+    likes_len: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    comments_len: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
     }
   });
   return Post;
