@@ -11,13 +11,13 @@ exports.postById = async (req, res, next, id) => {
       include: [
         {
         model: db.user,
-        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
       },
       {
         model: db.comment,
         include: {
           model: db.user,
-          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
         }
       }
     ]})
@@ -44,13 +44,13 @@ exports.getPosts = async (req, res) => {
       include: [
       {
         model: db.user,
-        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
       },
       {
         model: db.comment,
         include: {
           model: db.user,
-          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
         }
       }
     ],
@@ -87,13 +87,13 @@ exports.postsByUser = async (req, res) => {
     const posts = await db.post.findAll({where: {userId: user.id}, include: [
       {
         model: db.user,
-        attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
       },
       {
         model: db.comment,
         include: {
           model: db.user,
-          attributes: ['id', 'fullName', 'username', 'bio', 'imgId']
+          attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
         }
       }
     ]})

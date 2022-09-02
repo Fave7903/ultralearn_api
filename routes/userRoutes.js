@@ -8,7 +8,9 @@ const {
     deleteUser,
     follow,
     unfollow,
-    findPeople
+    findPeople,
+    myfollowers,
+    myfollowings
     } = require('../controllers/userControllers')
 const router = express.Router()
 
@@ -25,6 +27,8 @@ router.delete('/ul/:username', requirelogin, deleteUser)
 
 
 router.get('/user/findpeople/:username', requirelogin, findPeople)
+router.get('/user/followers/:username', requirelogin, myfollowers)
+router.get('/user/followings/:username', requirelogin, myfollowings)
 
 router.param('username', userByUsername)
 

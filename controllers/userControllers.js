@@ -230,3 +230,10 @@ exports.findPeople = async (req, res) => {
   //   res.json(users)
   // }).select('username fullName imgId')
 }
+
+exports.myfollowers = async (req, res) => {
+  return res.json(req.profile.myfollowers)
+}
+exports.myfollowings = async (req, res) => {
+  return res.json(req.profile.myfollowings)
+}
