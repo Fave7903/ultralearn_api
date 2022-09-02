@@ -19,12 +19,12 @@ db.follower = require("./follower.js")(sequelize, Sequelize);
 db.comment = require("./comment.js")(sequelize, Sequelize);
 db.like = require("./like.js")(sequelize, Sequelize);
 db.user.hasMany(db.post)
-db.user.hasMany(db.follower)
 db.post.belongsTo(db.user)
 db.post.hasMany(db.comment)
 db.comment.belongsTo(db.post)
 db.user.hasMany(db.comment)
 db.comment.belongsTo(db.user)
-db.follower.belongsTo(db.user)
+db.user.belongsToMany(db.user, { as: 'myfollowers', foreignKey: 'userId', through: db.follower });
+db.user.belongsToMany(db.user, { as: 'myfollowings', foreignKey: 'followerId', through: db.follower });
   
 module.exports = db; 

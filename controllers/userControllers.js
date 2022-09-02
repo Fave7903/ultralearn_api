@@ -1,8 +1,12 @@
 const db = require('../models')
 const userService = require("../services/userService")
+const { Op } = require('sequelize')
 
 exports.userByUsername = async (req, res, next, username) => {
-  const user = await db.user.findOne({ where: { username: username } })
+  const user = await db.user.findOne({ where: { username: username }, include: [
+    {model: db.user, as: 'myfollowers', attributes: ['id', 'fullName', 'username', 'imgId']},
+    {model: db.user, as: 'myfollowings', attributes: ['id', 'fullName', 'username', 'imgId']}
+  ] })
   if (user === null) {
     return res.status(403).json({
       error: "This user does not exist"
@@ -71,15 +75,24 @@ exports.follow = async (req, res, next) => {
     })
 
   } else {
+    const newUser = await db.user.findOne({where: {id: followed_userid}, include: [
+      {model: db.user, as: 'myfollowers', attributes: ['id', 'fullName', 'username', 'imgId']},
+      {model: db.user, as: 'myfollowings', attributes: ['id', 'fullName', 'username', 'imgId']}
+    ]})
+
+    
     userService.followable(followed_userid, userid).then(
-      (user) => {
+      async (user) => {
 
         if (user) {
-          let add_user = userService.addFollower(followed_userid, userid)
-          res.status(200).json({
-            status: true,
-            message: user.fullName + " was followed successfully!"
+          let add_user = await userService.addFollower(followed_userid, userid)
+          const userFollowers = await db.follower.findAll({where: {userId: followed_userid}})
+          const userFollowing = await db.follower.findAll({where: {followerId: followed_userid}})
+          newUser.update({
+            followers_len: userFollowers.length,
+            following_len: userFollowing.length
           })
+          res.status(200).json(newUser)
         } else {
           return res.status(401).json({
             status: false,
@@ -99,13 +112,21 @@ exports.unfollow = async (req, res, next) => {
 
 
   const userid = req.body.userId;
-    let unfollow_user = userService.doUnFollower(followed_userid, userid)
+  const newUser = await db.user.findOne({where: {id: followed_userid}, include: [
+    {model: db.user, as: 'myfollowers', attributes: ['id', 'fullName', 'username', 'imgId']},
+    {model: db.user, as: 'myfollowings', attributes: ['id', 'fullName', 'username', 'imgId']}
+  ]})
+    let unfollow_user = await userService.doUnFollower(followed_userid, userid)
+    const userFollowers = await db.follower.findAll({where: {userId: followed_userid}})
+    const userFollowing = await db.follower.findAll({where: {followerId: followed_userid}})
+    newUser.update({
+      followers_len: userFollowers.length,
+      following_len: userFollowing.length
+    })
+
     if (unfollow_user) {
 
-      res.status(200).json({
-        status: true,
-        message: "user unfollowed!"
-      })
+      res.status(200).json(newUser)
     } else {
       return res.status(401).json({
         status: false,
@@ -187,15 +208,25 @@ exports.deleteUser = async (req, res, next) => {
 //   })
 // }
 
-exports.findPeople = (req, res) => {
-  let following = req.profile.following
-  following.push(req.profile._id)
-  User.find({ _id: { $nin: following } }, (err, users) => {
-    if (err) {
-      return res.status(400).json({
-        error: err
-      })
-    }
-    res.json(users)
-  }).select('username fullName imgId')
+exports.findPeople = async (req, res) => {
+  let followingArr = []
+  let following = req.profile.myfollowings
+  following.forEach(user => {
+    followingArr.push(user.id)
+  });
+  followingArr.push(req.profile.id)
+  let users = await db.user.findAll({where: {
+      id: {[Op.notIn]: followingArr}
+  }, attributes: ['id', 'fullName', 'username', 'imgId', 'bio']})
+  return res.json(users)
+
+
+  // User.find({ _id: { $nin: following } }, (err, users) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       error: err
+  //     })
+  //   }
+  //   res.json(users)
+  // }).select('username fullName imgId')
 }

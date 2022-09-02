@@ -7,12 +7,8 @@ const {
     updateUser,
     deleteUser,
     follow,
-    unfollow
-    // addFollowing,
-    // addFollower,
-    // removeFollowing,
-    // removeFollower,
-    // findPeople
+    unfollow,
+    findPeople
     } = require('../controllers/userControllers')
 const router = express.Router()
 
@@ -20,14 +16,15 @@ const router = express.Router()
 // router.put('/user/unfollow', requireSignin, removeFollowing, removeFollower)
 
 router.get('/users', allUsers)
-router.get('/user/:userid/follow', requirelogin, follow )
-router.get('/user/:userid/unfollow', requirelogin, unfollow )
+router.put('/user/:userid/follow', requirelogin, follow )
+router.put('/user/:userid/unfollow', requirelogin, unfollow )
 
 router.get('/ul/:username', getUser)
 router.put('/ul/:username', requirelogin, updateUser)
 router.delete('/ul/:username', requirelogin, deleteUser)
 
-// router.get('/user/findpeople/:username', requireSignin, findPeople)
+
+router.get('/user/findpeople/:username', requirelogin, findPeople)
 
 router.param('username', userByUsername)
 
