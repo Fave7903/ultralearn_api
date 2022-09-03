@@ -3,6 +3,8 @@ const _ = require('lodash')
 const User = require('../models/user')
 const formidable = require('formidable')
 const fs = require('fs')
+const nodemailer = require('nodemailer')
+require('dotenv').config()
 
 exports.userByUsername = (req, res, next, username) => {
     User.findOne({username: req.params.username})
@@ -93,29 +95,29 @@ exports.sendPasswordResetEmail = async (req, res) => {
     });
   }
 
-  const API_KEY = process.env.MAILGUN_API_KEY;
-  const DOMAIN = process.env.MAILGUN_DOMAIN;
   const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, {
     expiresIn: 600
   })
 
-  const formData = require('form-data');
-  const Mailgun = require('mailgun.js');
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'femisolomon15@gmail.com',
+      pass: 'femi7903',
+      clientId: '125915580496-nl8vo0a5fu12djke1618rk6ukq07qgim.apps.googleusercontent.com',
+      clientSecret: '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',
+      refreshToken: '1//04DTlerifZEdBCgYIARAAGAQSNgF-L9IrAaZ1SBmIs3RI5YbuCKsfyWVdpGt5EBwwhb1ESYyTL1NVw2W0wH5zlZJ8EOVr-zPBEA'
+    }
+  })
 
-  const mailgun = new Mailgun(formData);
-  const client = mailgun.client({username: 'api', key: API_KEY});
-
-  const messageData = {
-    from: "ultralearnng@gmail.com",
+  let mailOptions = {
+    from: 'ultralearnng@gmail.com',
     to: user.email,
-    subject: "Password Reset",
+    subject: 'Ultralearn Password Reset',
     html:  `
       <div>
-      <style>
-        h1 { color: green; }
-      </style>
-
-      <h1>Click the link below to reset your password</h1>
+      <h1 style="color: green;">Click the link below to reset your password</h1>
       <p>
         Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
         HERE</a>
@@ -123,21 +125,59 @@ exports.sendPasswordResetEmail = async (req, res) => {
     </div>`
   };
 
-  client.messages.create(DOMAIN, messageData)
-  .then((response) => {
-    // console.log(response);
-    return res.status(200).json({
-      success: true,
-      message: 'email sent succesfully'
-    });
-  })
-  .catch((err) => {
-    console.error(err);
-    return res.status(200).json({
-      success: true,
-      message: 'email sent succesfully'
-    });
+  transporter.sendMail(mailOptions, function(err, data) {
+    if (err) {
+      console.log("Error " + err);
+    } else {
+      console.log("Email sent successfully");
+    }
   });
+
+  // const API_KEY = process.env.MAILGUN_API_KEY;
+  // const DOMAIN = process.env.MAILGUN_DOMAIN;
+  // const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, {
+  //   expiresIn: 600
+  // })
+
+  // const formData = require('form-data');
+  // const Mailgun = require('mailgun.js');
+
+  // const mailgun = new Mailgun(formData);
+  // const client = mailgun.client({username: 'api', key: API_KEY});
+
+  // const messageData = {
+  //   from: "ultralearnng@gmail.com",
+  //   to: user.email,
+  //   subject: "Password Reset",
+    // html:  `
+    //   <div>
+    //   <style>
+    //     h1 { color: green; }
+    //   </style>
+
+    //   <h1>Click the link below to reset your password</h1>
+    //   <p>
+    //     Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
+    //     HERE</a>
+    //   </p>
+    // </div>`
+  // };
+
+  // client.messages.create(DOMAIN, messageData)
+  // .then((response) => {
+  //   // console.log(response);
+  //   return res.status(200).json({
+  //     success: true,
+  //     message: 'email sent succesfully'
+  //   });
+  // })
+  // .catch((err) => {
+  //   console.error(err);
+  //   return res.status(200).json({
+  //     success: true,
+  //     message: 'email sent succesfully'
+  //   });
+  // });
 }
 
 
