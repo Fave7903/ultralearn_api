@@ -25,7 +25,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       },
       gender: {
-        type: Sequelize.ENUM("male", "female", "prefernottosay"),
+        type: Sequelize.ENUM("Male", "Female", "prefernottosay"),
       },
       dateOfBirth: {
         type: Sequelize.DATEONLY,
