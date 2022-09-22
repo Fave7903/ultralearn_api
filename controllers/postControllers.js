@@ -193,12 +193,28 @@ exports.comment = async (req, res) => {
   // comment.postedBy = req.body.userId
 
   const comment = await db.comment.create(req.body)
-  const post = await db.post.findOne({where: {id: req.body.postId}})
+  const post = await db.post.findOne({where: {id: req.body.postId}, 
+    order: [[db.comment, 'createdAt', 'DESC']],
+    include: [
+      {
+      model: db.user,
+      attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
+    },
+    {
+      model: db.comment,
+      include: {
+        model: db.user,
+        attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
+      }
+    }
+  ]
+  
+  })
   const comments = await db.comment.findAll({where: {postId: req.body.postId}})
   post.update({
     comments_len: comments.length
   })
-  return res.json(comment)
+  return res.json(post)
 
   // Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
   // .populate('comments.postedBy', '_id fullName username imgId')
@@ -245,4 +261,4 @@ exports.postComments = async (req, res) => {
   //     res.json(result)
   //   }
   // })
-// }
+// } 
