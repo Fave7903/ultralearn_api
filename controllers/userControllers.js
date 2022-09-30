@@ -237,3 +237,55 @@ exports.myfollowers = async (req, res) => {
 exports.myfollowings = async (req, res) => {
   return res.json(req.profile.myfollowings)
 }
+
+exports.sendPasswordResetEmail = async (req, res) => {
+
+  const user = await db.user.findOne({where: {email: req.body.email}});
+
+  if(!user || !user.email){
+    // this is intentional, so as to delay hackers
+    return res.status(200).json({
+      success: true,
+      message: 'email sent succesfully'
+    });
+  }
+
+  const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {
+    expiresIn: 600
+  })
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'ultralearnng@gmail.com',
+      pass: 'DigitalMarketing22',
+      clientId: '57661227747-ifqof28sld7ojlmpt34psvlskkd8fsgs.apps.googleusercontent.com',
+      clientSecret: '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',
+      refreshToken: '1//04MwNUjRnnfNKCgYIARAAGAQSNwF-L9IrSj0Ln890_wjgDakxrryfeoTNnQzOp5xEidNJXQEQGoUxPsxrJwv-Dc_0hjWRJPgNpH4'
+    }
+  })
+
+  let mailOptions = {
+    from: 'ultralearnng@gmail.com',
+    to: user.email,
+    subject: 'Ultralearn Password Reset',
+    html:  `
+      <div>
+      <h1 style="color: green;">Click the link below to reset your password</h1>
+      <p>
+        Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
+        HERE</a>
+      </p>
+    </div>`
+  };
+
+  transporter.sendMail(mailOptions, function(err, data) {
+    if (err) {
+      console.log("Error " + err);
+    } else {
+      console.log("Email sent successfully");
+    }
+  });
+
+}
