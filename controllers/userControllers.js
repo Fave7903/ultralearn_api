@@ -246,10 +246,9 @@ exports.sendPasswordResetEmail = async (req, res) => {
   const user = await db.user.findOne({where: {email: req.body.email}});
 
   if(!user || !user.email){
-    // this is intentional, so as to delay hackers
-    return res.status(200).json({
-      success: true,
-      message: 'email sent succesfully'
+    return res.status(401).json({
+      success: false,
+      message: "This user doesn't exist"
     });
   }
 
@@ -277,7 +276,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
       <div>
       <h1 style="color: green;">Click the link below to reset your password</h1>
       <p>
-        Click <a style="color: blue;" href='${req.protocol}://${req.get('host')}/reset-password/${token}'>
+        Click <a style="color: blue;" href='https://localhost:3000/reset-password/${token}'>
         HERE</a>
       </p>
     </div>`
@@ -288,6 +287,10 @@ exports.sendPasswordResetEmail = async (req, res) => {
       console.log("Error " + err);
     } else {
       console.log("Email sent successfully");
+      return res.status(200).json({
+        success: true,
+        message: "Email sent successfully"
+      })
     }
   });
 
