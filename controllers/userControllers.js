@@ -276,7 +276,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
       <div>
       <h1 style="color: green;">Click the link below to reset your password</h1>
       <p>
-        Click <a style="color: blue;" href='https://localhost:3000/reset-password/${token}'>
+        Click <a style="color: blue;" href='localhost:3000/reset-password/${token}'>
         HERE</a>
       </p>
     </div>`
