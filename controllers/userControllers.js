@@ -1,6 +1,9 @@
 const db = require('../models')
 const userService = require("../services/userService")
 const { Op } = require('sequelize')
+const jwt = require('jsonwebtoken')
+const bcrypt = require("bcrypt")
+const nodemailer = require('nodemailer')
 
 exports.userByUsername = async (req, res, next, username) => {
   const user = await db.user.findOne({ where: { username: username }, include: [
@@ -288,4 +291,29 @@ exports.sendPasswordResetEmail = async (req, res) => {
     }
   });
 
+}
+
+exports.resetPassword = async (req, res) => {
+  const { password } = req.body
+  const token = req.params.token
+  const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+  try {
+    const user = await db.user.findOne({where: {id: id}})
+    const newPassword = bcrypt.hashSync(password, 10)
+    await user.update({
+      password: newPassword
+    })
+    return res.status(200).json({
+      success: true,
+      message: 'password updated successfully'
+    });
+    
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: 'An error occured, try again'
+    });
+    
+  }
 }

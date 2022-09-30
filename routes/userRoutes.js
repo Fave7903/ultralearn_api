@@ -1,4 +1,5 @@
 const express = require('express')
+const { resetPasswordValidation, resetPasswordEmailValidation } = require('../validator/index')
 const { requirelogin } = require('../controllers/authControllers')
 const { 
     userByUsername,  
@@ -10,7 +11,9 @@ const {
     unfollow,
     findPeople,
     myfollowers,
-    myfollowings
+    myfollowings,
+    resetPassword,
+    sendPasswordResetEmail
     } = require('../controllers/userControllers')
 const router = express.Router()
 
@@ -29,6 +32,10 @@ router.delete('/ul/:username', requirelogin, deleteUser)
 router.get('/user/findpeople/:username', requirelogin, findPeople)
 router.get('/user/followers/:username', requirelogin, myfollowers)
 router.get('/user/followings/:username', requirelogin, myfollowings)
+
+//password reset
+router.put('/reset-password/:token', resetPasswordValidation, resetPassword)
+router.post('/ul/email', resetPasswordEmailValidation, sendPasswordResetEmail)
 
 router.param('username', userByUsername)
 
