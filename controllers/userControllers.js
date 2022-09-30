@@ -103,11 +103,11 @@ exports.sendPasswordResetEmail = async (req, res) => {
     service: 'gmail',
     auth: {
       type: 'OAuth2',
-      user: 'femisolomon15@gmail.com',
-      pass: 'femi7903',
-      clientId: '125915580496-nl8vo0a5fu12djke1618rk6ukq07qgim.apps.googleusercontent.com',
-      clientSecret: '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',
-      refreshToken: '1//04DTlerifZEdBCgYIARAAGAQSNgF-L9IrAaZ1SBmIs3RI5YbuCKsfyWVdpGt5EBwwhb1ESYyTL1NVw2W0wH5zlZJ8EOVr-zPBEA'
+      user: 'ultralearnng@gmail.com',
+      pass: 'DigitalMarketing22',
+      clientId: '57661227747-ifqof28sld7ojlmpt34psvlskkd8fsgs.apps.googleusercontent.com',
+      clientSecret: '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',
+      refreshToken: '1//04MwNUjRnnfNKCgYIARAAGAQSNwF-L9IrSj0Ln890_wjgDakxrryfeoTNnQzOp5xEidNJXQEQGoUxPsxrJwv-Dc_0hjWRJPgNpH4'
     }
   })
 
