@@ -309,14 +309,12 @@ exports.resetPassword = async (req, res) => {
       password: newPassword
     })
     return res.status(200).json({
-      success: true,
       message: 'password updated successfully'
     });
     
   } catch (error) {
     return res.status(401).json({
-      success: false,
-      message: 'An error occured, try again'
+      error
     });
     
   }
