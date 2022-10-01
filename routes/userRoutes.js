@@ -34,7 +34,7 @@ router.get('/user/followers/:username', requirelogin, myfollowers)
 router.get('/user/followings/:username', requirelogin, myfollowings)
 
 //password reset
-router.put('/reset-password/:token', resetPasswordValidation, resetPassword)
+router.put('/reset-password', resetPasswordValidation, resetPassword)
 router.post('/ul/email', resetPasswordEmailValidation, sendPasswordResetEmail)
 
 router.param('username', userByUsername)
