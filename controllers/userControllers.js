@@ -298,8 +298,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-  const { password } = req.body
-  const token = req.params.token
+  const { password, token } = req.body
   const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
   try {
