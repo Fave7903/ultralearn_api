@@ -96,7 +96,7 @@ exports.postsByUser = async (req, res) => {
           attributes: ['id', 'fullName', 'username', 'bio', 'imgId', 'location']
         }
       }
-    ]})
+    ],   order: [['createdAt', 'DESC']]})
     return res.status(200).json(posts)
   } catch (error) {
     return res.json({message: error.message})

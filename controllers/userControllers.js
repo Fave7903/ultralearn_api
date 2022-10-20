@@ -274,7 +274,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
     subject: 'Ultralearn Password Reset',
     html:  `
       <div>
-      <h1 style="color: green;">Click the link below to reset your password</h1>
+      <h1 style="color: #460273;">Click the link below to reset your password</h1>
       <p>
         Click <a style="color: blue;" href='https://ultralearn.co/reset-password/${token}'>
         HERE</a>
