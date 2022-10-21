@@ -264,7 +264,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
       pass: 'DigitalMarketing22',
       clientId: '57661227747-ifqof28sld7ojlmpt34psvlskkd8fsgs.apps.googleusercontent.com',
       clientSecret: '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',
-      refreshToken: '1//04MwNUjRnnfNKCgYIARAAGAQSNwF-L9IrSj0Ln890_wjgDakxrryfeoTNnQzOp5xEidNJXQEQGoUxPsxrJwv-Dc_0hjWRJPgNpH4'
+      refreshToken: '1//0461AYZ9F-Z2uCgYIARAAGAQSNwF-L9IrEqKgngkGW-xUVHMltPqNaw8vqB58IkHabGliSbhyhqxie1uEUahkBwn2IvMSB29z1N0'
     }
   })
 
