@@ -31,7 +31,7 @@ router.delete('/ul/:username', requirelogin, deleteUser)
 
 router.get('/user/findpeople/:username', requirelogin, findPeople)
 router.get('/user/followers/:username', requirelogin, myfollowers)
-router.get('/user/followings/:username', requirelogin, myfollowings)
+router.get('/user/followings/:username', requirelogin, myfollowings) 
 
 //password reset
 router.put('/reset-password', resetPasswordValidation, resetPassword)
